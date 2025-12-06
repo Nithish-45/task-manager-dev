@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Simple Task Manager</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h2>Task Manager</h2>
@@ -31,16 +32,31 @@ async function loadTasks() {
     const tasks = await res.json();
 
     const list = document.getElementById("taskList");
-    list.innerHTML = "";
+    list.innerHTML = ""; // clear old tasks
 
-    tasks.forEach(t => {
+    tasks.forEach((task, index) => {
         const li = document.createElement("li");
-        li.textContent = t;
+        li.textContent = task;
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Delete";
+        delBtn.style.marginLeft = "10px";
+
+        delBtn.onclick = async () => {
+            await fetch("http://127.0.0.1:5000/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ index })
+            });
+            loadTasks();
+        };
+
+        li.appendChild(delBtn);
         list.appendChild(li);
     });
 }
 
-loadTasks();
+
 </script>
 </body>
 </html>
